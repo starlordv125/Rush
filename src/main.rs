@@ -19,7 +19,7 @@ use whoami::{self, hostname};
 // Keep main() clean, don't repeat code
 fn main() {
     check_os();
-    println!("***Rush V0.1-alpha***");
+    println!("***Rush V0.1.1***");
     shell();
 }
 
