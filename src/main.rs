@@ -16,9 +16,6 @@ use colored::Colorize;
 use std::env::consts::OS;
 use whoami::{self, hostname};
 
-// For cd
-use std::path::Path;
-
 // Keep main() clean, don't repeat code
 fn main() {
     check_os();
@@ -46,13 +43,6 @@ fn make_prompt() -> String {
     return username + "@" + &host + ":" + &wd
 }
 
-fn change_dir() {
-    print!("Directory to change to: ");
-    let input_dir: String = read!();
-    let root = Path::new(&input_dir);
-    assert!(env::set_current_dir(root).is_ok());
-}
-
 fn shell() {
     loop {
         let prompt = make_prompt();
@@ -60,7 +50,7 @@ fn shell() {
         let command: String = user_input().replace("\n", "");
         match command.as_str() {
             "" => continue,
-            "cd" => change_dir(),
+            "cd" => cd::change_dir(),
             "pwd" => pwd::cwd(),
             "calc" => {
                 calc::main();
