@@ -2,82 +2,61 @@
 // Cameron Reynolds;
 // NO AI USED
 
+// builtins go here
 mod calc;
+mod pwd;
+mod ls;
+mod cd;
 
-//LIBRARIES GO HERE, DESCRIBE THEM!!
+// libraries go here
 use text_io::read;
-// For listing contents of directories
 use std::env;
 use std::path::{PathBuf};
-
-// External library, not sure what for yet
-//use anyhow::Result;
+use colored::Colorize;
 use std::env::consts::OS;
-use std::process::exit;
-
-// For cd
-use std::path::Path;
+use whoami::{self, hostname};
 
 // Keep main() clean, don't repeat code
 fn main() {
-    println!("***FILE EXPLORER V0.1-alpha***");
+    check_os();
+    println!("***Rush V0.1.1***");
     shell();
-    //println!("{}", test)
 }
 
-// Not entirely sure what Result<()> means yet
-fn cwd() {
-    // Gets current directory and assigns unreadable format to variable
-    let currentwd: PathBuf = env::current_dir().expect("REASON");
-    // .display() is to turn the file path into a human-readable format
-    println!("The current directory is {}", currentwd.display());
-}
-
-fn user_input(opsys: &str) -> String {
-    match opsys {
-        "linux" => read!("{}\n"),
-        "windows" => read!("{}\r\n"),
-        _ => {
-            println!("Error: OS not supported");
-            exit(2)
-        }
+fn check_os() {
+    match OS {
+        "linux" => (),
+        _ => panic!("Error: OS not supported")
     }
 }
 
-fn get_os(opsys: &str) -> (&'static str, PathBuf, &'static str) {
-    let currentwd: PathBuf = env::current_dir().expect("REASON");
-    match opsys {
-        "linux" => ("", currentwd, "$ "),
-        "windows" => ("RS ", currentwd, "> "),
-        _ => {
-            println!("Critical Error: OS not supported");
-            panic!("Program is running on unsupported OS")
-        }
-    }
+// Keeping this a function for now because it will get more complex with time
+fn user_input() -> String {
+    read!("{}\n")
 }
 
-fn change_dir() {
-    print!("Directory to change to: ");
-    let input_dir: String = read!();
-    let root = Path::new(&input_dir);
-    assert!(env::set_current_dir(root).is_ok());
+fn make_prompt() -> String {
+    let wd: PathBuf = env::current_dir().expect("Error finding current working directory in get_os()");
+    let wd = wd.display().to_string();
+    let username: String = whoami::username().unwrap().to_string();
+    let host = hostname().unwrap().to_string();
+    return username + "@" + &host + ":" + &wd
 }
 
 fn shell() {
-    let opsys = OS;
     loop {
-        let osinfo = get_os(opsys);
-        print!("{}{}{}", osinfo.0, osinfo.1.display(), osinfo.2);
-        let command: String = user_input(opsys).replace("\n", "");
+        let prompt = make_prompt();
+        print!("{}$ ", prompt.green());
+        let command: String = user_input().replace("\n", "");
         match command.as_str() {
             "" => continue,
-            "cd" => change_dir(),
-            "pwd" => cwd(),
+            "cd" => cd::change_dir(),
+            "pwd" => pwd::cwd(),
             "calc" => {
                 calc::main();
             }
             "help" => {
-                println!("Rust Shell v0.1-alpha");
+                println!("Rust Shell v0.2-alpha");
                 println!("pwd -> Prints current working directory");
                 println!("calc -> Opens calculator application");
                 println!("help -> Displays this menu");
@@ -88,7 +67,7 @@ fn shell() {
                 break;
             }
             _ => {
-                println!("Rush: Command not found...");
+                println!("-rush: Command not found...");
                 println!("Type \"help\" for list of commands");
             }
         };
