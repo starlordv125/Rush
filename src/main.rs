@@ -2,7 +2,9 @@
 // Cameron Reynolds;
 // NO AI USED
 
+// builtins go here
 mod calc;
+mod pwd;
 
 //LIBRARIES GO HERE, DESCRIBE THEM!!
 use text_io::read;
@@ -11,7 +13,6 @@ use std::env;
 use std::path::{PathBuf};
 
 // External library, not sure what for yet
-//use anyhow::Result;
 use std::env::consts::OS;
 use std::process::exit;
 
@@ -20,17 +21,8 @@ use std::path::Path;
 
 // Keep main() clean, don't repeat code
 fn main() {
-    println!("***FILE EXPLORER V0.1-alpha***");
+    println!("***Rush V0.1-alpha***");
     shell();
-    //println!("{}", test)
-}
-
-// Not entirely sure what Result<()> means yet
-fn cwd() {
-    // Gets current directory and assigns unreadable format to variable
-    let currentwd: PathBuf = env::current_dir().expect("REASON");
-    // .display() is to turn the file path into a human-readable format
-    println!("The current directory is {}", currentwd.display());
 }
 
 fn user_input(opsys: &str) -> String {
@@ -72,7 +64,7 @@ fn shell() {
         match command.as_str() {
             "" => continue,
             "cd" => change_dir(),
-            "pwd" => cwd(),
+            "pwd" => pwd::cwd(),
             "calc" => {
                 calc::main();
             }
