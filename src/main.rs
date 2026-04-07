@@ -5,47 +5,45 @@
 // builtins go here
 mod calc;
 mod pwd;
+mod ls;
+mod cd;
 
-//LIBRARIES GO HERE, DESCRIBE THEM!!
+// libraries go here
 use text_io::read;
-// For listing contents of directories
 use std::env;
 use std::path::{PathBuf};
-
-// External library, not sure what for yet
+use colored::Colorize;
 use std::env::consts::OS;
-use std::process::exit;
+use whoami::{self, hostname};
 
 // For cd
 use std::path::Path;
 
 // Keep main() clean, don't repeat code
 fn main() {
+    check_os();
     println!("***Rush V0.1-alpha***");
     shell();
 }
 
-fn user_input(opsys: &str) -> String {
-    match opsys {
-        "linux" => read!("{}\n"),
-        "windows" => read!("{}\r\n"),
-        _ => {
-            println!("Error: OS not supported");
-            exit(2)
-        }
+fn check_os() {
+    match OS {
+        "linux" => (),
+        _ => panic!("Error: OS not supported")
     }
 }
 
-fn get_os(opsys: &str) -> (&'static str, PathBuf, &'static str) {
-    let currentwd: PathBuf = env::current_dir().expect("REASON");
-    match opsys {
-        "linux" => ("", currentwd, "$ "),
-        "windows" => ("RS ", currentwd, "> "),
-        _ => {
-            println!("Critical Error: OS not supported");
-            panic!("Program is running on unsupported OS")
-        }
-    }
+// Keeping this a function for now because it will get more complex with time
+fn user_input() -> String {
+    read!("{}\n")
+}
+
+fn make_prompt() -> String {
+    let wd: PathBuf = env::current_dir().expect("Error finding current working directory in get_os()");
+    let wd = wd.display().to_string();
+    let username: String = whoami::username().unwrap().to_string();
+    let host = hostname().unwrap().to_string();
+    return username + "@" + &host + ":" + &wd
 }
 
 fn change_dir() {
@@ -56,11 +54,10 @@ fn change_dir() {
 }
 
 fn shell() {
-    let opsys = OS;
     loop {
-        let osinfo = get_os(opsys);
-        print!("{}{}{}", osinfo.0, osinfo.1.display(), osinfo.2);
-        let command: String = user_input(opsys).replace("\n", "");
+        let prompt = make_prompt();
+        print!("{}$ ", prompt.green());
+        let command: String = user_input().replace("\n", "");
         match command.as_str() {
             "" => continue,
             "cd" => change_dir(),
@@ -69,7 +66,7 @@ fn shell() {
                 calc::main();
             }
             "help" => {
-                println!("Rust Shell v0.1-alpha");
+                println!("Rust Shell v0.2-alpha");
                 println!("pwd -> Prints current working directory");
                 println!("calc -> Opens calculator application");
                 println!("help -> Displays this menu");
@@ -80,7 +77,7 @@ fn shell() {
                 break;
             }
             _ => {
-                println!("Rush: Command not found...");
+                println!("-rush: Command not found...");
                 println!("Type \"help\" for list of commands");
             }
         };
