@@ -35,18 +35,18 @@ fn user_input() -> String {
     read!("{}\n")
 }
 
-fn make_prompt() -> String {
+fn make_prompt() -> (String, String) {
     let wd: PathBuf = env::current_dir().expect("Error finding current working directory in get_os()");
     let wd = wd.display().to_string();
     let username: String = whoami::username().unwrap().to_string();
     let host = hostname().unwrap().to_string();
-    return username + "@" + &host + ":" + &wd
+    return (username + "@" + &host, wd)
 }
 
 fn shell() {
     loop {
-        let prompt = make_prompt();
-        print!("{}$ ", prompt.green());
+        let (prompt, path) = make_prompt();
+        print!("{}:{}$ ", prompt.green(), path.green());
         let command: String = user_input().replace("\n", "");
         match command.as_str() {
             "" => continue,
