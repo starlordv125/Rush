@@ -1,0 +1,8 @@
+[package]
+name = "rush"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.101"
+text_io = "0.1.13"
