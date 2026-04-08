@@ -38,6 +38,7 @@ fn user_input() -> String {
     read!("{}\n")
 }
 
+// add prompt customization in future
 fn make_prompt() -> (String, String) {
     let wd: PathBuf = env::current_dir().expect("Error finding current working directory in get_os()");
     let wd = wd.display().to_string();
@@ -55,12 +56,14 @@ fn shell() {
             "" => continue,
             "cd" => cd::change_dir(),
             "pwd" => pwd::cwd(),
+            "ls" => ls::list(),
             "calc" => {
                 calc::main();
             }
             "help" => {
                 println!("Rust Shell v{}", VERSION);
                 println!("pwd -> Prints current working directory");
+                println!("cd -> Change working directory");
                 println!("calc -> Opens calculator application");
                 println!("help -> Displays this menu");
                 println!("exit -> Exits the program");
