@@ -16,10 +16,13 @@ use colored::Colorize;
 use std::env::consts::OS;
 use whoami::{self, hostname};
 
+// Version number
+const VERSION: &str = "0.1.1";
+
 // Keep main() clean, don't repeat code
 fn main() {
     check_os();
-    println!("***Rush V0.1.1***");
+    println!("***Rush v{}***", VERSION);
     shell();
 }
 
@@ -56,7 +59,7 @@ fn shell() {
                 calc::main();
             }
             "help" => {
-                println!("Rust Shell v0.2-alpha");
+                println!("Rust Shell v{}", VERSION);
                 println!("pwd -> Prints current working directory");
                 println!("calc -> Opens calculator application");
                 println!("help -> Displays this menu");
