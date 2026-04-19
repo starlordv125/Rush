@@ -8,7 +8,11 @@ mod pwd;
 mod ls;
 mod cd;
 
+use core::fmt;
 // libraries go here
+use std::io::{self, Write, stdout};
+use std::process::Command;
+use std::fs::{self, ReadDir};
 use text_io::read;
 use std::env;
 use std::path::{PathBuf};
@@ -47,6 +51,18 @@ fn make_prompt() -> (String, String) {
     return (username + "@" + &host, wd)
 }
 
+fn check_bin(command: String) {
+    let binary: ReadDir = fs::read_dir("/bin/").unwrap();
+    for item in binary {
+        let str_item = item.unwrap().path().display().to_string().replace("/bin/", "");
+        if str_item == command {
+            println!("Command found!");
+            Command::new(&command).spawn().expect("Error executing command in /bin directory");
+            break;
+        }
+    }
+}
+
 fn shell() {
     loop {
         let (prompt, path) = make_prompt();
@@ -72,10 +88,7 @@ fn shell() {
                 println!("Exiting...");
                 break;
             }
-            _ => {
-                println!("-rush: Command not found...");
-                println!("Type \"help\" for list of commands");
-            }
+            _ => check_bin(command)
         };
     }
 }
